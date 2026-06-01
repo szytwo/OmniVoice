@@ -191,6 +191,7 @@ def generate_voice_clone(
     )
 
     lang = language if (language and language != "Auto") else None
+    prompt_text = prompt_text.strip() if prompt_text else None
 
     kw: Dict[str, Any] = dict(
         text=text.strip(), language=lang, generation_config=gen_config

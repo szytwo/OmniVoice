@@ -1,6 +1,6 @@
 ## fork
 
-https://github.com/QwenLM/Qwen3-TTS
+https://github.com/k2-fsa/OmniVoice
 
 ## 安装
 
@@ -11,8 +11,6 @@ venv\Scripts\activate
 pip install torch==2.9.1 torchvision==0.24.1 torchaudio==2.9.1 --index-url https://download.pytorch.org/whl/cu128
 pip install -r ./api_requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 pip install -e .
-
-hf download k2-fsa/OmniVoice --local-dir checkpoints/OmniVoice
 
 nvidia-smi -L  # 查看GUID
 
@@ -56,7 +54,7 @@ git remote -v # 查看远程仓库
 git remote remove origin # 移除远程仓库连接，origin，upstream
 
 # 添加新的远程仓库，origin，upstream
-git remote add upstream https://github.com/szytwo/Qwen3-TTS.git
+git remote add upstream https://github.com/szytwo/OmniVoice.git
 
 git fetch upstream # 从远程仓库拉取更新，origin，upstream
 git checkout main # 切换到主分支

@@ -38,15 +38,15 @@ class ModelManager:
         logging.info(f"Loading model: {model_type}")
 
         if model_type == "OmniVoice":
-            model_dir = "checkpoints/OmniVoice"
-            asr_model_name = "checkpoints/whisper-large-v2"
+            model_name = "k2-fsa/OmniVoice"
+            asr_model_name = "openai/whisper-large-v3-turbo"
         else:
             raise ValueError(f"Unsupported model type: {model_type}")
 
         dtype = self._dtype_from_str(self.dtype)
 
         return OmniVoice.from_pretrained(
-            model_dir,
+            model_name,
             device_map=self.device,
             dtype=dtype,
             load_asr=self.load_asr,
