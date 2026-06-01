@@ -1,0 +1,3 @@
+[submodule "third_party/fastText"]
+	path = third_party/fastText
+	url = https://github.com/szytwo/fastText.git

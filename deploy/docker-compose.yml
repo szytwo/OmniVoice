@@ -1,0 +1,41 @@
+networks:
+  ai_network:
+    driver: bridge
+
+services:
+  qwen3-tts:
+    image: qwen3-tts:1.0
+    container_name: qwen3-tts
+    restart: always
+    runtime: nvidia
+    privileged: true
+    volumes:
+      - d:/AI/Qwen3-TTS/results:/code/results
+      - d:/AI/Qwen3-TTS/error:/code/error
+      - d:/AI/Qwen3-TTS/logs:/code/logs
+    environment:
+      - TQDM_DISABLE=1 # 全局关闭进度条显示
+      - PYTHONUNBUFFERED=1 # 取消标准输出缓冲
+      - CUDA_VISIBLE_DEVICES=0
+      - NVIDIA_VISIBLE_DEVICES=0
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True,max_split_size_mb:128,garbage_collection_threshold:0.7
+      - TRANSFORMERS_OFFLINE=1
+      - HF_HUB_OFFLINE=1
+      - REPO_URL=""
+      - GITHUB_TOKEN=""
+      - ENABLE_GIT_PULL=false
+    tty: true  # 分配伪终端
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['0']
+    shm_size: '8g'
+    ports:
+      - '9985:9985'
+    command: python api.py --port 9985 --dtype fp16
+    networks:
+      - ai_network

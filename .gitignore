@@ -28,3 +28,20 @@ examples/exp*
 .claude/
 *.wav
 *.jsonl
+
+
+venv/
+pretrained_models/
+checkpoints/
+results/
+results01/
+error/
+error01/
+logs/
+logs01/
+
+# data files
+*.exe
+*.whl
+*.tar
+*.uploading.cfg
