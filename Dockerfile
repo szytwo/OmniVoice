@@ -95,14 +95,9 @@ ENV PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple
 # 升级 pip、setuptools、wheel
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
-# 安装 flash-attn，使用 --no-build-isolation 选项以避免构建隔离问题
-RUN pip install wheels/linux/flash_attn-2.8.3+cu128torch2.9-cp311-cp311-linux_x86_64.whl  \
-    && rm -rf /code/wheels
-
 # 升级 pip 并安装 Python 依赖：
 RUN pip install --no-cache-dir -e . \
     && pip install --no-cache-dir -r api_requirements.txt \
-    && pip install faster-qwen3-tts \
     && rm -rf /root/.cache/pip /tmp/*
 
 # 安装 fasttext
@@ -115,7 +110,7 @@ RUN pip install --no-cache-dir . \
 WORKDIR /code
 
 # 暴露端口
-EXPOSE 9985
+EXPOSE 9983
 
 COPY --from=builder /code/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

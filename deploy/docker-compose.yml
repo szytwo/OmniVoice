@@ -3,16 +3,16 @@ networks:
     driver: bridge
 
 services:
-  qwen3-tts:
-    image: qwen3-tts:1.0
-    container_name: qwen3-tts
+  omnivoice:
+    image: omnivoice:1.0
+    container_name: omnivoice
     restart: always
     runtime: nvidia
     privileged: true
     volumes:
-      - d:/AI/Qwen3-TTS/results:/code/results
-      - d:/AI/Qwen3-TTS/error:/code/error
-      - d:/AI/Qwen3-TTS/logs:/code/logs
+      - d:/AI/OmniVoice/results:/code/results
+      - d:/AI/OmniVoice/error:/code/error
+      - d:/AI/OmniVoice/logs:/code/logs
     environment:
       - TQDM_DISABLE=1 # 全局关闭进度条显示
       - PYTHONUNBUFFERED=1 # 取消标准输出缓冲
