@@ -35,7 +35,7 @@ services:
               device_ids: ['3']
     shm_size: '8g'
     ports:
-      - '19985:9985'
-    command: python api.py --port 9985
+      - '19983:9983'
+    command: python api.py --port 9983 --dtype fp16
     networks:
       - ai_network-01
