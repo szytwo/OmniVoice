@@ -450,6 +450,7 @@ async def zero_shot(
     advanced_params: str = Form(default="{}", description="高级参数(JSON字符串)"),
     spaker: float = Form(default=1.00, description="语速"),
     seed: int = Form(default=0, description="随机种子"),
+    instruct: str = Form("", description="输入生成指令（可选）"),
     timeout_seconds: int = Form(default=600, description="生成超时时间，秒"),
     remove_silence: bool = Form(default=True, description="是否移除超出阈值的静音"),
     remove_silence_auto: bool = Form(
@@ -510,6 +511,7 @@ async def zero_shot(
         language=language,
         speed=spaker,
         seed=seed,
+        instruct=instruct,
         timeout_seconds=timeout_seconds,
         remove_silence=remove_silence,
         min_silence=min_silence,
