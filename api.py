@@ -33,6 +33,7 @@ from wdd.AudioProcessor import AudioProcessor
 from wdd.file_utils import delete_old_files_and_folders, logging
 from wdd.ModelManager import ModelManager
 from wdd.TextProcessor import TextProcessor
+from wdd.voice_effect import apply_preset
 
 
 def get_main_args():
@@ -304,6 +305,8 @@ def generate_voice_clone_timeout(**kwargs):
 
     try:
         output_path = generate_voice_clone_timeout_with_retry(**kwargs)
+        # 短视频标准器
+        output_path = apply_preset(output_path, "capcut_pro_voice")
         errcode = 0
         errmsg = "ok"
     except Exception as ex:

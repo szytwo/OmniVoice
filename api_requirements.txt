@@ -1,2 +1,3 @@
 fasttext-wheel; platform_system == 'Windows' or platform_system == 'Darwin'
 cn2an
+pedalboard
