@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import argparse
 import json
 import logging
 import os
@@ -30,6 +31,26 @@ formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 # 创建日志目录（如果不存在）
 log_dir = "logs"
 os.makedirs(log_dir, exist_ok=True)
+
+# 清理根日志记录器的处理器
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+
+
+def get_debug_mode() -> bool:
+    """
+    统一判断是否启用 debug 模式（优先级：命令行 > 环境变量 > 默认 False）
+    """
+    # 1. 解析命令行参数
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--debug", action="store_true", help="Enable debug mode")
+    args, _ = parser.parse_known_args()  # 避免干扰主脚本的其他参数
+
+    # 2. 读取环境变量
+    env_debug = os.getenv("DEBUG", "false").lower() == "true"
+
+    # 3. 最终判断（命令行参数优先）
+    return args.debug or env_debug
 
 
 # 自定义按日期命名的文件名生成函数
@@ -81,8 +102,10 @@ file_handler.setFormatter(formatter)
 tqdm_handler = TqdmLoggingHandler()
 tqdm_handler.setFormatter(formatter)
 
+log_level = logging.DEBUG if get_debug_mode() else logging.INFO
+
 logging.basicConfig(
-    level=logging.INFO,
+    level=log_level,
     handlers=[file_handler, tqdm_handler],  # 同时使用文件 Handler 和 Tqdm Handler
 )
 
