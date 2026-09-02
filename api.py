@@ -175,9 +175,6 @@ def generate_voice_clone(
     if not seed:
         seed = uuid.uuid4().int >> 96  # 基于 UUID，保证唯一性（几乎不会重复）
 
-    logging.info(f"seed: {seed}")
-    set_seed(seed)
-
     # 获取TTS实例
     model_manager = get_model_manager()
     model = model_manager.get_model("OmniVoice")
@@ -194,33 +191,57 @@ def generate_voice_clone(
     lang = language if (language and language != "Auto") else None
     prompt_text = prompt_text.strip() if prompt_text else None
 
-    kw: Dict[str, Any] = dict(
-        text=text.strip(), language=lang, generation_config=gen_config
-    )
-
-    if speed is not None and float(speed) != 1.0:
-        kw["speed"] = float(speed)
-
-    duration = float(advanced_params.get("duration", 0.0))
-    if duration is not None and float(duration) > 0:
-        kw["duration"] = float(duration)
-
-    kw["voice_clone_prompt"] = model.create_voice_clone_prompt(
+    voice_clone_prompt = model.create_voice_clone_prompt(
         ref_audio=prompt_wav,
         ref_text=prompt_text,
     )
 
-    if instruct and instruct.strip():
-        kw["instruct"] = instruct.strip()
+    max_chars = int(advanced_params.get("max_chars", 200))
 
-    wav_list = model.generate(**kw)
+    text_parts = TextProcessor.split_text(text.strip(), max_chars=max_chars)
+    wav_list_all = []
 
+    for index, part_text in enumerate(text_parts):
+        logging.info(f"segment: {part_text}")
+
+        part_seed = seed + index
+        logging.info(f"seed: {part_seed}")
+        set_seed(part_seed)
+
+        kw: Dict[str, Any] = dict(
+            text=part_text.strip(), language=lang, generation_config=gen_config
+        )
+
+        if speed is not None and float(speed) != 1.0:
+            kw["speed"] = float(speed)
+
+        duration = float(advanced_params.get("duration", 0.0))
+        if duration is not None and float(duration) > 0:
+            kw["duration"] = float(duration)
+
+        kw["voice_clone_prompt"] = voice_clone_prompt
+
+        if instruct and instruct.strip():
+            kw["instruct"] = instruct.strip()
+
+        wav_list = model.generate(**kw)
+
+        if wav_list:
+            wav_list_all.append(wav_list[0])
+
+        # 可以主动释放一下显存
+        torch.cuda.empty_cache()
+
+    if not wav_list_all:
+        raise RuntimeError("TTS generation returned no audio")
+
+    final_wav = np.concatenate(wav_list_all, axis=0)
     # 指定保存文件的路径
     filename = f"{str(uuid.uuid4())}.wav"
     output_path = f"{result_output_dir}/{filename}"
 
     # 保存音频
-    AudioProcessor.save_infer_audio(wav_list[0], sampling_rate, output_path)
+    AudioProcessor.save_infer_audio(final_wav, sampling_rate, output_path)
 
     return output_path
 

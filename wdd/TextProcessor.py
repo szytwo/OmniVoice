@@ -818,3 +818,50 @@ class TextProcessor:
             text = text.replace(wrong_char, correct_char)
 
         return text
+
+    @staticmethod
+    def split_text(text: str, max_chars: int = 200):
+        """
+        将长文本尽量按照语义和标点进行切分。
+
+        优先级：
+        1. 句号、问号、感叹号、分号
+        2. 逗号、顿号
+        3. 空格
+        4. 最终才强制按 max_chars 切
+        """
+
+        text = text.strip()
+
+        if not text:
+            return []
+
+        if len(text) <= max_chars:
+            return [text]
+
+        AR_SPLIT_PUNCT = "،؟؛"  # 阿拉伯语\维吾尔语标点符号
+        SPLIT_PUNCT = "：，；。！？,;!?.:" + AR_SPLIT_PUNCT
+        # 先按照句末标点拆
+        sentences = re.split(rf"(?<=[{SPLIT_PUNCT}])", text)
+
+        result = []
+        current = ""
+
+        for sentence in sentences:
+            sentence = sentence.strip()
+
+            if not sentence:
+                continue
+
+            if len(current) + len(sentence) <= max_chars:
+                current += sentence
+            else:
+                if current:
+                    result.append(current)
+
+                current = ""
+
+        if current:
+            result.append(current)
+
+        return [x.strip() for x in result if x.strip()]
