@@ -856,9 +856,10 @@ class TextProcessor:
             if len(current) + len(sentence) <= max_chars:
                 current += sentence
             else:
-                if current:
-                    result.append(current)
+                if not current:
+                    current = sentence
 
+                result.append(current)
                 current = ""
 
         if current:
