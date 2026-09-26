@@ -840,7 +840,11 @@ class TextProcessor:
             return [text]
 
         AR_SPLIT_PUNCT = "،؟؛"  # 阿拉伯语\维吾尔语标点符号
-        SPLIT_PUNCT = "：，；。！？,;!?.:" + AR_SPLIT_PUNCT
+        # 缅甸语
+        # ၊ U+104A Myanmar Sign Little Section
+        # ။ U+104B Myanmar Sign Section
+        MY_PUNCT = "၊။"
+        SPLIT_PUNCT = "：，；。！？,;!?.:" + AR_SPLIT_PUNCT + MY_PUNCT
         # 先按照句末标点拆
         sentences = re.split(rf"(?<=[{SPLIT_PUNCT}])", text)
 
